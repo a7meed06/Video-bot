@@ -18,10 +18,12 @@ class AdminPanel:
         stats = self.db.get_stats()
 
         keyboard = [
-            [InlineKeyboardButton("📊 إحصائيات", callback_data='admin_stats')],
-            [InlineKeyboardButton("🔍 بحث مستخدم", callback_data='admin_search')],
-            [InlineKeyboardButton("🚷 حظر/فك حظر", callback_data='admin_ban')],
-        ]
+    [InlineKeyboardButton("📊 إحصائيات", callback_data='admin_stats')],
+    [InlineKeyboardButton("🔍 بحث مستخدم", callback_data='admin_search')],
+    [InlineKeyboardButton("🚷 حظر/فك حظر", callback_data='admin_ban')],
+    [InlineKeyboardButton("🔙 رجوع", callback_data='back_start')],
+]
+
 
         text = f'''
 🔧 **لوحة تحكم الأدمن**
