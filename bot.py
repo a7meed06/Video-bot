@@ -132,8 +132,11 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await show_user_info(query, user_id)
         return
     elif data == 'back_start':
-        await start(update, context)
-        return
+    # ارسل رسالة جديدة بدل edit
+    await query.delete_message()
+    await start(update, context)
+    return
+
 
     if data.startswith('quality_'):
         quality = data.replace('quality_', '')
