@@ -7,7 +7,8 @@ class Config:
     BOT_TOKEN = os.getenv("BOT_TOKEN", "")
     ADMIN_IDS = list(map(int, os.getenv("ADMIN_IDS", "0").split(",")))
 
-    MAX_FILE_SIZE = 50 * 1024 * 1024
+    MAX_FILE_SIZE = 1024 * 1024 * 1024  # 1GB
+
     DAILY_LIMIT = 100
 
     DATABASE_URL = "sqlite:///bot.db"
