@@ -15,35 +15,36 @@ class VideoDownloader:
                 return platform.split('.')[0]
         return 'unknown'
 
-    def get_ydl_opts(self, quality='best', audio_only=False):
-        opts = {
-            'outtmpl': os.path.join(self.temp_dir, '%(id)s_%(format_id)s.%(ext)s'),
-            'quiet': True,
-            'no_warnings': True,
-        }
-
-        if audio_only:
-            opts.update({
-                'format': 'bestaudio/best',
-                'postprocessors': [{
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '320',
-                }],
-            })
+def get_ydl_opts(self, quality='best', audio_only=False):
+    opts = {
+        'outtmpl': os.path.join(self.temp_dir, '%(id)s_%(format_id)s.%(ext)s'),
+        'quiet': True,
+        'no_warnings': True,
+    }
+    
+    if audio_only:
+        opts.update({
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '320',
+            }],
+        })
+    else:
+        # حد 1GB = 1073741824 bytes
+        if quality == 'best':
+            opts['format'] = 'best[filesize_approx<1G]/bestvideo[filesize_approx<1G]+bestaudio/best'
+        elif quality == '1080':
+            opts['format'] = 'best[height<=1080][filesize_approx<1G]/bestvideo[height<=1080][filesize_approx<1G]+bestaudio/best'
+        elif quality == '720':
+            opts['format'] = 'best[height<=720][filesize_approx<1G]/best'
         else:
-            if quality == 'best':
-                opts['format'] = 'best[filesize<<50M]/bestvideo[filesize<<50M]+bestaudio/best'
-            elif quality == '1080':
-                opts['format'] = 'best[height<=1080][filesize<<50M]/bestvideo[height<=1080][filesize<<50M]+bestaudio/best'
-            elif quality == '720':
-                opts['format'] = 'best[height<=720][filesize<<50M]/best'
-            else:
-                opts['format'] = 'best[filesize<<50M]/best'
-
-            opts['merge_output_format'] = 'mp4'
-
-        return opts
+            opts['format'] = 'best[filesize_approx<1G]/best'
+        
+        opts['merge_output_format'] = 'mp4'
+    
+    return opts
 
     async def download(self, url, quality='best', audio_only=False, progress_hook=None):
         loop = asyncio.get_event_loop()
