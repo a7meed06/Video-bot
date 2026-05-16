@@ -296,19 +296,29 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except:
         pass
 
-def main():
+async def main():
     os.makedirs(Config.TEMP_DIR, exist_ok=True)
     application = Application.builder().token(Config.BOT_TOKEN).build()
-
+    
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("admin", admin_panel.show_panel))
     application.add_handler(CallbackQueryHandler(handle_callback))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_url))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_messages))
     application.add_error_handler(error_handler)
-
+    
+    # شغل queue في background
     asyncio.create_task(queue.process_queue())
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    
+    await application.initialize()
+    await application.start()
+    await application.updater.start_polling(allowed_updates=Update.ALL_TYPES)
+    
+    # خليه يشتغل للأبد
+    await asyncio.Event().wait()
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
+
+
+    
